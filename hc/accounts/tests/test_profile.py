@@ -26,7 +26,6 @@ class ProfileTestCase(BaseTestCase):
         check.save()
 
         self.alice.profile.send_report()
-
         # Assert that the email was sent and check email content
 
     def test_it_adds_team_member(self):
@@ -111,7 +110,8 @@ class ProfileTestCase(BaseTestCase):
     def test_sets_daily_report_schedule(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"update_reports_allowed": "1", "reports_allowed": True, "report_schedule": 'daily'}
+        form = {"update_reports_allowed": "1",
+                "reports_allowed": True, "report_schedule": 'daily'}
         response = self.client.post("/accounts/profile/", form)
         self.assertEqual(response.status_code, 200)
 
@@ -122,7 +122,8 @@ class ProfileTestCase(BaseTestCase):
     def test_sets_weekly_report_schedule(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"update_reports_allowed": "1", "reports_allowed": True, "report_schedule": 'weekly'}
+        form = {"update_reports_allowed": "1",
+                "reports_allowed": True, "report_schedule": 'weekly'}
         response = self.client.post("/accounts/profile/", form)
         self.assertEqual(response.status_code, 200)
 
@@ -133,10 +134,23 @@ class ProfileTestCase(BaseTestCase):
     def test_sets_monthly_report_schedule(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"update_reports_allowed": "1", "reports_allowed": True, "report_schedule": 'monthly'}
+        form = {"update_reports_allowed": "1",
+                "reports_allowed": True, "report_schedule": 'monthly'}
         response = self.client.post("/accounts/profile/", form)
         self.assertEqual(response.status_code, 200)
 
         self.alice.profile.refresh_from_db()
         schedule = self.alice.profile.schedule_interval
         self.assertEqual(schedule, 30)
+
+    def test_report_schedule_not_set_if_not_reports_allowed(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"update_reports_allowed": "1",
+                "reports_allowed": False, "report_schedule": 'monthly'}
+        response = self.client.post("/accounts/profile/", form)
+        self.assertEqual(response.status_code, 200)
+
+        self.alice.profile.refresh_from_db()
+        schedule = self.alice.profile.schedule_interval
+        self.assertNotEqual(schedule, 30)  # check if not changed to monthly

@@ -162,9 +162,10 @@ def profile(request):
                     if schedule in ['daily', 'weekly', 'monthly']:
                         time = {'daily': 1, 'weekly': 7, 'monthly': 30}
                         profile.schedule_interval = time[schedule]
-                        profile.reports_allowed = form_data["reports_allowed"]
-                        profile.save()
-                        messages.success(request, "Your settings have been updated!")
+                profile.reports_allowed = form_data["reports_allowed"]
+                profile.save()
+                messages.success(request, "Your settings have been updated!")
+
         elif "invite_team_member" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()

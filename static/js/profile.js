@@ -1,3 +1,14 @@
+function collapseOnReportsAllowedChange(reportsAllowed){
+    if(reportsAllowed.is(':checked')){
+            // show
+            $(".report-schedule-btn-container").removeClass('collapse');
+            return;
+    }
+    else{
+        // hide
+        $(".report-schedule-btn-container").addClass('collapse');
+    }
+}
 $(function() {
 
     $(".member-remove").click(function() {
@@ -10,4 +21,13 @@ $(function() {
         return false;
     });
 
+    var reportsAllowed = $("input[name*='reports_allowed']");
+    reportsAllowed.change(function(){
+        collapseOnReportsAllowedChange(reportsAllowed);
+    });
+});
+
+$( document ).ready(function() {
+    var reportsAllowed = $("input[name*='reports_allowed']");
+    collapseOnReportsAllowedChange(reportsAllowed);
 });
